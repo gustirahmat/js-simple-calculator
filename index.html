@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple JavaScript Calculator</title>
+
+    <style>
+        button {
+            padding: 6px 12px;
+        }
+        input {
+            width: 210px;
+            height: 25px;
+        }
+        .btn-value {
+            padding: 10px 15px;
+            margin: 3px;
+            background: antiquewhite;
+        }
+        #btnRemoveLast {
+            background: palevioletred;
+            color: ghostwhite;
+        }
+        #txtResult {
+            margin: 0;
+            font-size: x-large;
+            width: 200px;
+            padding: 0 5px;
+            display: inline-block;
+        }
+    </style>
+    <script>
+        function getRandomColor() { // Function to generate random color
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+
+            for (let i = 0; i < 6; i++ ) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+
+            return color;
+        }
+
+        function startTime() { // Function to be loaded on page startup
+            // Create date and time
+            const today = new Date();
+            const year = today.getFullYear();
+
+            document.getElementById('txtToday').innerHTML = today ;
+            document.getElementById('txtYear').innerHTML = year;
+            setTimeout(startTime, 500);
+
+            // Update text color with random color every seconds
+            const name = document.getElementById("txtName");
+            name.style.color = getRandomColor();
+        }
+
+        function hideResult() { // Hide calculation result and clear button
+            document.getElementById("txtResult").style.display = "none";
+            document.getElementById("btnDelete").style.display = "none";
+        }
+    </script>
+</head>
+<body onload="startTime()" onpageshow="hideResult()">
+    <main>
+        <div>
+            <button class="btn-value" id="btn0" value="0" onclick="document.getElementById('txtCalc').value += this.value">0</button>
+            <button class="btn-value" id="btn1" value="1" onclick="document.getElementById('txtCalc').value += this.value">1</button>
+            <button class="btn-value" id="btn2" value="2" onclick="document.getElementById('txtCalc').value += this.value">2</button>
+            <button class="btn-value" id="btn3" value="3" onclick="document.getElementById('txtCalc').value += this.value">3</button>
+            <button class="btn-value" id="btn4" value="4" onclick="document.getElementById('txtCalc').value += this.value">4</button>
+            <br><br>
+            <button class="btn-value" id="btn5" value="5" onclick="document.getElementById('txtCalc').value += this.value">5</button>
+            <button class="btn-value" id="btn6" value="6" onclick="document.getElementById('txtCalc').value += this.value">6</button>
+            <button class="btn-value" id="btn7" value="7" onclick="document.getElementById('txtCalc').value += this.value">7</button>
+            <button class="btn-value" id="btn8" value="8" onclick="document.getElementById('txtCalc').value += this.value">8</button>
+            <button class="btn-value" id="btn9" value="9" onclick="document.getElementById('txtCalc').value += this.value">9</button>
+        </div>
+        <br>
+        <div>
+            <button class="btn-value" id="btnAdd" value="+" onclick="document.getElementById('txtCalc').value += ' ' + this.value + ' '">&plus;</button>
+            <button class="btn-value" id="btnSubtract" value="-" onclick="document.getElementById('txtCalc').value += ' ' + this.value + ' '">&minus;</button>
+            <button class="btn-value" id="btnMultiply" value="*" onclick="document.getElementById('txtCalc').value += ' ' + this.value + ' '">×</button>
+            <button class="btn-value" id="btnDivide" value="/" onclick="document.getElementById('txtCalc').value += ' ' + this.value + ' '">&divide;</button>
+            <button class="btn-value" id="btnRemoveLast" onclick="removeLastValue()">&leftarrow;</button>
+        </div>
+        <br>
+        <div>
+            <input type="text" id="txtCalc" placeholder="Value you want to calculate" readonly>
+            <button id="btnCalc" onclick="validateValue()">&equals;</button>
+        </div>
+        <br>
+        <div>
+            <!--<input type="text" id="txtResult" placeholder="Calculation result" readonly>-->
+            <p id="txtResult">Calculation result</p>
+            <button id="btnDelete" onclick="removeValue()">&circlearrowright;</button>
+        </div>
+    </main>
+    <hr>
+    <footer>
+        <p id="txtName">Simple Javascript Calculator &copy; <span id="txtYear"></span></p>
+        <small>Developed by Gusti Rahmat</small>
+        <br>
+        <small id="txtToday"></small>
+    </footer>
+
+    <script>
+        function removeValue() {
+            document.getElementById("txtCalc").value = null;
+            document.getElementById("txtResult").innerText = "Calculation result";
+            hideResult();
+        }
+
+        function removeLastValue() {
+            const calc_value = document.getElementById('txtCalc').value;
+            document.getElementById('txtCalc').value = calc_value.substring(0, calc_value.length - 1);
+
+            if (calc_value === '') {
+                hideResult();
+            }
+        }
+
+        function validateValue() {
+            const calc_value = document.getElementById('txtCalc').value;
+
+            if (calc_value !== '') {
+                const totalArr = calc_value.split(' ');
+                console.log(totalArr);
+
+                if (totalArr.length > 7) {
+                    alert("Maximum calculation steps reached. You only can do 3 steps calculation.");
+                } else {
+                    document.getElementById("txtResult").style.display = "inline-block";
+                    document.getElementById("btnDelete").style.display = "inline-block";
+                    calculateValue();
+                }
+            } else {
+                alert("You didn't input any value!");
+            }
+        }
+
+        function calculateValue() {
+            const calc_value = document.getElementById('txtCalc').value.split(' ');
+            let operator_first = calc_value[1],
+                operator_second = calc_value[3],
+                operator_third = calc_value[5]; // Variable operator
+            let value_first = calc_value[0],
+                value_second = calc_value[2],
+                value_third = calc_value[4],
+                value_forth = calc_value[6]; // Variable value
+            let calc_result_first, calc_result_second, calc_result_final; // Variable result
+
+            console.log(calc_value);
+
+            if (operator_first === "+") {
+                calc_result_first = parseFloat(value_first) + parseFloat(value_second);
+
+                if (operator_second === "+") {
+                    calc_result_second = parseFloat(calc_result_first) + parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "-") {
+                    calc_result_second = parseFloat(calc_result_first) - parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "*") {
+                    calc_result_second = parseFloat(calc_result_first) * parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "/") {
+                    calc_result_second = parseFloat(calc_result_first) / parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else {
+                    calc_result_final = calc_result_first;
+                }
+            } else if (operator_first === "-") {
+                calc_result_first = parseFloat(value_first) - parseFloat(value_second);
+
+                if (operator_second === "+") {
+                    calc_result_second = parseFloat(calc_result_first) + parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "-") {
+                    calc_result_second = parseFloat(calc_result_first) - parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "*") {
+                    calc_result_second = parseFloat(calc_result_first) * parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "/") {
+                    calc_result_second = parseFloat(calc_result_first) / parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else {
+                    calc_result_final = calc_result_first;
+                }
+            } else if (operator_first === "*") {
+                calc_result_first = parseFloat(value_first) * parseFloat(value_second);
+
+                if (operator_second === "+") {
+                    calc_result_second = parseFloat(calc_result_first) + parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "-") {
+                    calc_result_second = parseFloat(calc_result_first) - parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "*") {
+                    calc_result_second = parseFloat(calc_result_first) * parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "/") {
+                    calc_result_second = parseFloat(calc_result_first) / parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else {
+                    calc_result_final = calc_result_first;
+                }
+            } else if (operator_first === "/") {
+                calc_result_first = parseFloat(value_first) / parseFloat(value_second);
+
+                if (operator_second === "+") {
+                    calc_result_second = parseFloat(calc_result_first) + parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "-") {
+                    calc_result_second = parseFloat(calc_result_first) - parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "*") {
+                    calc_result_second = parseFloat(calc_result_first) * parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else if (operator_second === "/") {
+                    calc_result_second = parseFloat(calc_result_first) / parseFloat(value_third);
+
+                    if (operator_third === "+") {
+                        calc_result_final = parseFloat(calc_result_second) + parseFloat(value_forth);
+                    } else if (operator_third === "-") {
+                        calc_result_final = parseFloat(calc_result_second) - parseFloat(value_forth);
+                    } else if (operator_third === "*") {
+                        calc_result_final = parseFloat(calc_result_second) * parseFloat(value_forth);
+                    } else if (operator_third === "/") {
+                        calc_result_final = parseFloat(calc_result_second) / parseFloat(value_forth);
+                    } else {
+                        calc_result_final = calc_result_second;
+                    }
+                } else {
+                    calc_result_final = calc_result_first;
+                }
+            }
+
+            document.getElementById("txtResult").innerText = calc_result_final;
+        }
+    </script>
+</body>
+</html>
